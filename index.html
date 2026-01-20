@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OsteoCoach v4.0</title>
+    <title>OsteoCoach v4.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -245,14 +245,76 @@
 
         function showSettings() {
             setActiveNav(3);
-            render(`<div class="fade-in pt-4"><h2 class="text-2xl font-black mb-6 uppercase">Data Lab</h2><div class="card mb-4"><h3 class="font-bold mb-1">Cloud State</h3><p class="text-[10px] text-zinc-500 mb-4">Live link to SteinHQ Storage.</p><div class="flex items-center gap-2 text-blue-500 text-xs font-black"><i data-lucide="check" class="w-4 h-4"></i> ACTIVE PIPELINE</div></div><div class="card"><h3 class="font-bold mb-4">Export/Import</h3><div class="grid grid-cols-2 gap-3"><button onclick="exp()" class="btn btn-secondary text-xs">EXPORT</button><label class="btn btn-secondary text-xs cursor-pointer">IMPORT<input type="file" class="hidden" accept=".csv" onchange="imp(this)"></label></div></div></div>`);
+            render(`<div class="fade-in pt-4"><h2 class="text-2xl font-black mb-6 uppercase">Data Lab</h2><div class="card mb-4"><h3 class="font-bold mb-1">Cloud State</h3><p class="text-[10px] text-zinc-500 mb-4">Live link to SteinHQ Storage.</p><div id="sync-status-tab" class="flex items-center gap-2 text-blue-500 text-xs font-black"><i data-lucide="check" class="w-4 h-4"></i> ACTIVE PIPELINE</div></div><div class="card"><h3 class="font-bold mb-4">Export/Import</h3><div class="grid grid-cols-2 gap-3"><button onclick="exp()" class="btn btn-secondary text-xs">EXPORT</button><label class="btn btn-secondary text-xs cursor-pointer">IMPORT<input type="file" class="hidden" accept=".csv" onchange="imp(this)"></label></div></div></div>`);
         }
 
         function render(html) { document.getElementById('main-container').innerHTML = html; lucide.createIcons(); }
         function setActiveNav(idx) { document.querySelectorAll('.nav-item').forEach((el, i) => i === idx ? el.classList.add('active') : el.classList.remove('active')); }
         function upG(idx) { const w = document.getElementById(`w-${idx}`).value; const r = document.getElementById(`r-${idx}`).value; const el = document.getElementById(`g-${idx}`); el.innerText = w && r ? (w * (1 + r/30)).toFixed(1) : '0'; }
         function exp() { let c = "date,workoutId,exercise,weight,reps,e1rm\n"; state.logs.forEach(l => { c += `${l.date},${l.workoutId},${l.exercise},${l.weight},${l.reps},${l.e1rm}\n` }); const b = new Blob([c], {type:'text/csv'}); const u = window.URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = 'osteocoach_data.csv'; a.click(); }
-        function imp(i) { const f = i.files[0]; const r = new FileReader(); r.onload = function(e) { const rows = e.target.result.split('\n').slice(1); rows.forEach(row => { const [d, wid, ex, w, rep, e1] = row.split(','); if(d) state.logs.push({date:d, workoutId:wid, exercise:ex, weight:w, reps:rep, e1rm:e1}); }); localStorage.setItem('pf_backup', JSON.stringify(state.logs)); location.reload(); }; r.readAsText(f); }
+        
+        // --- SMART IMPORT LOGIC (NO DUPLICATES) ---
+        async function imp(i) {
+            const f = i.files[0];
+            const r = new FileReader();
+            const label = i.parentElement;
+            label.innerHTML = "ANALYZING...";
+            label.classList.add('animate-pulse');
+
+            r.onload = async function(e) {
+                const text = e.target.result.replace(/\r/g, '');
+                const rows = text.split('\n').slice(1);
+                const newEntries = [];
+
+                rows.forEach(row => {
+                    if(!row.trim()) return;
+                    const [d, wid, ex, w, rep, e1] = row.split(',');
+                    
+                    if(d && ex) {
+                        // CHECK: Does this record exist in current state?
+                        // We use loose equality (==) for numbers vs strings
+                        const isDuplicate = state.logs.some(log => 
+                            log.date === d.trim() && 
+                            log.exercise === ex.trim() && 
+                            log.weight == w.trim() && 
+                            log.reps == rep.trim()
+                        );
+
+                        if (!isDuplicate) {
+                            newEntries.push({
+                                date: d.trim(),
+                                workoutId: wid.trim(),
+                                exercise: ex.trim(),
+                                weight: w.trim(),
+                                reps: rep.trim(),
+                                e1rm: e1.trim()
+                            });
+                        }
+                    }
+                });
+
+                if(newEntries.length > 0) {
+                    label.innerHTML = "UPLOADING...";
+                    try {
+                        await fetch(STEIN_URL, {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify(newEntries)
+                        });
+                        alert(`SUCCESS: Uploaded ${newEntries.length} new records. (Skipped ${rows.length - newEntries.length} duplicates)`);
+                        location.reload();
+                    } catch(err) {
+                        alert("ERROR: Upload failed.");
+                        label.innerHTML = "FAILED";
+                    }
+                } else {
+                    alert("No new unique records found. Your cloud is already up to date!");
+                    label.innerHTML = "IMPORT";
+                    label.classList.remove('animate-pulse');
+                }
+            };
+            r.readAsText(f);
+        }
 
         function renderRecovery() { render(`<div class="fade-in pt-10 text-center"><div class="bg-orange-900/20 border border-orange-500 p-8 rounded-2xl mb-8"><i data-lucide="alert-circle" class="w-16 h-16 text-orange-500 mx-auto mb-4"></i><h2 class="text-2xl font-black text-orange-500 uppercase">Recovery Mode</h2><p class="text-xs text-orange-200/50 mt-2 uppercase tracking-widest">Pain Level ${state.painLevel}</p></div><div class="text-left space-y-4"><div class="card border-l-4 border-orange-500"><h3 class="font-bold">Spinal Decompression</h3><p class="text-zinc-500 text-xs">15 min brisk walk + McGill Big 3 only.</p></div></div><button onclick="goHome()" class="mt-8 text-zinc-500 text-xs font-black uppercase underline">Back to Hub</button></div>`); }
         function renderEmergency() { render(`<div class="fade-in pt-10 text-center"><div class="bg-red-900/20 border border-red-500 p-8 rounded-2xl mb-8"><i data-lucide="shield-x" class="w-16 h-16 text-red-500 mx-auto mb-4"></i><h2 class="text-2xl font-black text-red-500 uppercase">Absolute Stop</h2></div><p class="text-zinc-500 px-6">Your spine is in protective guarding. Do not lift. Lie on your stomach immediately.</p><button onclick="goHome()" class="mt-8 text-zinc-500 text-xs font-black uppercase underline">Back to Hub</button></div>`); }
