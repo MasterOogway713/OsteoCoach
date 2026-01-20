@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OsteoCoach v4.2</title>
+    <title>OsteoCoach v4.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -86,6 +86,7 @@
             const status = document.getElementById('sync-status');
             try {
                 const res = await fetch(STEIN_URL);
+                if (!res.ok) throw new Error("API Error");
                 const cloudData = await res.json();
                 state.logs = Array.isArray(cloudData) ? cloudData.filter(d => d.date) : [];
                 localStorage.setItem('pf_backup', JSON.stringify(state.logs));
@@ -219,10 +220,11 @@
             const entry = { date: new Date().toISOString().split('T')[0], workoutId: wId, exercise: ex, weight: w, reps: r, e1rm: ghost };
             btn.innerHTML = `SYNCING...`;
             try {
-                await fetch(STEIN_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify([entry]) });
+                const res = await fetch(STEIN_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify([entry]) });
+                if(!res.ok) throw new Error("API Rejected");
                 btn.innerHTML = `✓ DATA LOGGED`;
                 btn.classList.replace('btn-secondary', 'btn-primary');
-            } catch(e) { btn.innerHTML = `! LOCAL BACKUP`; }
+            } catch(e) { btn.innerHTML = `! FAILED (CHECK SHEET TAB NAME)`; }
         }
 
         function showStats() {
@@ -253,12 +255,13 @@
         function upG(idx) { const w = document.getElementById(`w-${idx}`).value; const r = document.getElementById(`r-${idx}`).value; const el = document.getElementById(`g-${idx}`); el.innerText = w && r ? (w * (1 + r/30)).toFixed(1) : '0'; }
         function exp() { let c = "date,workoutId,exercise,weight,reps,e1rm\n"; state.logs.forEach(l => { c += `${l.date},${l.workoutId},${l.exercise},${l.weight},${l.reps},${l.e1rm}\n` }); const b = new Blob([c], {type:'text/csv'}); const u = window.URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = 'osteocoach_data.csv'; a.click(); }
         
-        // --- SMART IMPORT LOGIC (NO DUPLICATES) ---
+        // --- ROBUST IMPORT LOGIC ---
         async function imp(i) {
             const f = i.files[0];
             const r = new FileReader();
             const label = i.parentElement;
-            label.innerHTML = "ANALYZING...";
+            
+            label.innerHTML = "UPLOADING...";
             label.classList.add('animate-pulse');
 
             r.onload = async function(e) {
@@ -268,47 +271,44 @@
 
                 rows.forEach(row => {
                     if(!row.trim()) return;
-                    const [d, wid, ex, w, rep, e1] = row.split(',');
+                    const cols = row.split(',');
+                    if (cols.length < 6) return;
                     
+                    const [d, wid, ex, w, rep, e1] = cols;
                     if(d && ex) {
-                        // CHECK: Does this record exist in current state?
-                        // We use loose equality (==) for numbers vs strings
                         const isDuplicate = state.logs.some(log => 
                             log.date === d.trim() && 
                             log.exercise === ex.trim() && 
                             log.weight == w.trim() && 
                             log.reps == rep.trim()
                         );
-
                         if (!isDuplicate) {
-                            newEntries.push({
-                                date: d.trim(),
-                                workoutId: wid.trim(),
-                                exercise: ex.trim(),
-                                weight: w.trim(),
-                                reps: rep.trim(),
-                                e1rm: e1.trim()
-                            });
+                            newEntries.push({ date: d.trim(), workoutId: wid.trim(), exercise: ex.trim(), weight: w.trim(), reps: rep.trim(), e1rm: e1.trim() });
                         }
                     }
                 });
 
                 if(newEntries.length > 0) {
-                    label.innerHTML = "UPLOADING...";
                     try {
-                        await fetch(STEIN_URL, {
+                        const response = await fetch(STEIN_URL, {
                             method: 'POST',
                             headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify(newEntries)
                         });
-                        alert(`SUCCESS: Uploaded ${newEntries.length} new records. (Skipped ${rows.length - newEntries.length} duplicates)`);
+
+                        if (!response.ok) {
+                            throw new Error(`Server Error: ${response.status}`);
+                        }
+
+                        alert(`SUCCESS: Uploaded ${newEntries.length} new records.`);
                         location.reload();
                     } catch(err) {
-                        alert("ERROR: Upload failed.");
+                        console.error(err);
+                        alert(`UPLOAD FAILED: Error ${err.message}. \n\nCHECK: Is your Google Sheet tab named 'workouts'? (Lowercase, plural)`);
                         label.innerHTML = "FAILED";
                     }
                 } else {
-                    alert("No new unique records found. Your cloud is already up to date!");
+                    alert("No new unique records found.");
                     label.innerHTML = "IMPORT";
                     label.classList.remove('animate-pulse');
                 }
