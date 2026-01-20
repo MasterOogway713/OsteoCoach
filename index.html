@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OsteoCoach v4.6</title>
+    <title>OsteoCoach v4.7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -42,7 +42,7 @@
             <div>
                 <div class="flex items-center gap-1">
                     <h1 class="text-lg font-bold tracking-tight leading-none uppercase">OSTEO<span class="text-blue-500">COACH</span></h1>
-                    <span class="text-[9px] text-zinc-500 font-mono border border-zinc-800 px-1 rounded bg-zinc-900/50">v4.6</span>
+                    <span class="text-[9px] text-zinc-500 font-mono border border-zinc-800 px-1 rounded bg-zinc-900/50">v4.7</span>
                 </div>
                 <p class="text-[9px] text-zinc-500 font-bold tracking-widest uppercase">Clinical Strength</p>
             </div>
@@ -230,13 +230,132 @@
             } catch(e) { btn.innerHTML = `! FAILED (Check Headers)`; }
         }
 
+        // --- NEW ANALYTICS ENGINE (v4.7) ---
         function showStats() {
             setActiveNav(1);
-            const benchLogs = state.logs.filter(l => l.exercise.includes('Press') || l.exercise.includes('Bench'));
-            render(`<div class="fade-in pt-4"><h2 class="text-2xl font-black mb-6 uppercase">Analytics</h2><div class="card mb-6"><h3 class="font-bold text-xs text-zinc-500 mb-4 uppercase tracking-widest">Strength Trend</h3><canvas id="c"></canvas></div><div class="card"><h3 class="font-bold text-xs text-zinc-500 mb-2 uppercase tracking-widest">Consistency</h3><div class="text-5xl font-black">${state.logs.length} <span class="text-xs font-normal text-zinc-600">Points</span></div></div></div>`);
-            if(benchLogs.length) {
-                new Chart(document.getElementById('c'), { type:'line', data:{ labels: benchLogs.map(l=>l.date.slice(5)), datasets:[{label:'e1RM', data:benchLogs.map(l=>l.e1rm), borderColor:'#3b82f6', tension:0.4, pointRadius:2}] }, options:{plugins:{legend:{display:false}}, scales:{y:{grid:{color:'#1a1a1a'}}, x:{grid:{display:false}}}}});
-            }
+            
+            // Get unique exercises
+            const uniqueExercises = [...new Set(state.logs.map(l => l.exercise))].sort();
+            // Default to most recent or Bench
+            let selectedEx = uniqueExercises.find(e => e.includes('Bench')) || uniqueExercises[0] || '';
+
+            render(`
+                <div class="fade-in pt-4 pb-20">
+                    <h2 class="text-2xl font-black mb-6 uppercase">Analytics</h2>
+                    
+                    <!-- Exercise Selector -->
+                    <div class="card mb-6">
+                        <h3 class="font-bold text-xs text-zinc-500 mb-2 uppercase tracking-widest">Select Movement</h3>
+                        <select id="ex-select" onchange="updateChart(this.value)" class="input-dark text-sm w-full font-bold">
+                            ${uniqueExercises.map(ex => `<option value="${ex}" ${ex === selectedEx ? 'selected' : ''}>${ex}</option>`).join('')}
+                        </select>
+                    </div>
+
+                    <!-- Strength Chart -->
+                    <div class="card mb-6">
+                        <div class="flex justify-between mb-4">
+                            <h3 class="font-bold text-xs text-zinc-500 uppercase tracking-widest">Strength Trend (e1RM)</h3>
+                            <span id="best-display" class="text-xs font-mono font-bold text-blue-400"></span>
+                        </div>
+                        <div class="relative h-48 w-full">
+                            <canvas id="c"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Volume Chart -->
+                    <div class="card mb-6">
+                        <h3 class="font-bold text-xs text-zinc-500 mb-4 uppercase tracking-widest">Session Volume (Tonnage)</h3>
+                        <div class="relative h-48 w-full">
+                            <canvas id="volChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="font-bold text-xs text-zinc-500 mb-2 uppercase tracking-widest">Total Data Points</h3>
+                        <div class="text-5xl font-black">${state.logs.length} <span class="text-xs font-normal text-zinc-600">Sets</span></div>
+                    </div>
+                </div>
+            `);
+
+            if (selectedEx) setTimeout(() => updateChart(selectedEx), 100);
+            setTimeout(renderVolumeChart, 100);
+        }
+
+        // Attach helper to window scope for HTML access
+        window.updateChart = function(exName) {
+            const ctx = document.getElementById('c');
+            if(!ctx) return;
+            
+            const chartStatus = Chart.getChart(ctx);
+            if (chartStatus) chartStatus.destroy();
+
+            const exLogs = state.logs.filter(l => l.exercise === exName).sort((a,b) => new Date(a.date) - new Date(b.date));
+            if (exLogs.length === 0) return;
+
+            const best = Math.max(...exLogs.map(l => parseFloat(l.e1rm)));
+            document.getElementById('best-display').innerText = `PR: ${best}kg`;
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: exLogs.map(l => l.date.slice(5)), // MM-DD
+                    datasets: [{
+                        label: 'e1RM',
+                        data: exLogs.map(l => l.e1rm),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#1e293b',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: '#27272a' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        };
+
+        function renderVolumeChart() {
+             const ctx = document.getElementById('volChart');
+             if(!ctx) return;
+
+             const volByDate = {};
+             state.logs.forEach(l => {
+                 if(!volByDate[l.date]) volByDate[l.date] = 0;
+                 volByDate[l.date] += (parseFloat(l.weight) * parseFloat(l.reps));
+             });
+
+             const dates = Object.keys(volByDate).sort();
+             const volumes = dates.map(d => volByDate[d]);
+
+             new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dates.map(d => d.slice(5)),
+                    datasets: [{
+                        label: 'Volume (kg)',
+                        data: volumes,
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: '#27272a' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+             });
         }
 
         function showHistory() {
@@ -274,7 +393,6 @@
         function upG(idx) { const w = document.getElementById(`w-${idx}`).value; const r = document.getElementById(`r-${idx}`).value; const el = document.getElementById(`g-${idx}`); el.innerText = w && r ? (w * (1 + r/30)).toFixed(1) : '0'; }
         function exp() { let c = "date,workoutId,exercise,weight,reps,e1rm\n"; state.logs.forEach(l => { c += `${l.date},${l.workoutId},${l.exercise},${l.weight},${l.reps},${l.e1rm}\n` }); const b = new Blob([c], {type:'text/csv'}); const u = window.URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = 'osteocoach_data.csv'; a.click(); }
         
-        // --- CLEAN IMPORT LOGIC ---
         async function imp(i) {
             const f = i.files[0];
             const r = new FileReader();
