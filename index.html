@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OsteoCoach v4.5 (Debug)</title>
+    <title>OsteoCoach v4.6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -42,7 +42,7 @@
             <div>
                 <div class="flex items-center gap-1">
                     <h1 class="text-lg font-bold tracking-tight leading-none uppercase">OSTEO<span class="text-blue-500">COACH</span></h1>
-                    <span class="text-[9px] text-zinc-500 font-mono border border-zinc-800 px-1 rounded bg-zinc-900/50">v4.5</span>
+                    <span class="text-[9px] text-zinc-500 font-mono border border-zinc-800 px-1 rounded bg-zinc-900/50">v4.6</span>
                 </div>
                 <p class="text-[9px] text-zinc-500 font-bold tracking-widest uppercase">Clinical Strength</p>
             </div>
@@ -227,7 +227,7 @@
                 if(!res.ok) throw new Error("API Rejected");
                 btn.innerHTML = `✓ DATA LOGGED`;
                 btn.classList.replace('btn-secondary', 'btn-primary');
-            } catch(e) { btn.innerHTML = `! FAILED (CHECK SHEET TAB NAME)`; }
+            } catch(e) { btn.innerHTML = `! FAILED (Check Headers)`; }
         }
 
         function showStats() {
@@ -252,11 +252,11 @@
             setActiveNav(3);
             render(`
                 <div class="fade-in pt-4">
-                    <h2 class="text-2xl font-black mb-6 uppercase">Data Lab (DEBUG MODE)</h2>
+                    <h2 class="text-2xl font-black mb-6 uppercase">Data Lab</h2>
                     <div class="card mb-4">
-                        <h3 class="font-bold mb-4">Diagnostics</h3>
-                        <button onclick="testConnection()" class="btn btn-primary text-xs mb-2">TEST CONNECTION</button>
-                        <p id="debug-output" class="text-xs font-mono text-zinc-500 mt-2 p-2 bg-zinc-900 rounded hidden"></p>
+                        <h3 class="font-bold mb-1">Cloud State</h3>
+                        <p class="text-[10px] text-zinc-500 mb-4">Connected to SteinHQ Storage.</p>
+                        <div id="sync-status-tab" class="flex items-center gap-2 text-blue-500 text-xs font-black"><i data-lucide="check" class="w-4 h-4"></i> ACTIVE PIPELINE</div>
                     </div>
                     <div class="card">
                         <h3 class="font-bold mb-4">Export/Import</h3>
@@ -269,45 +269,23 @@
             `);
         }
 
-        async function testConnection() {
-            const out = document.getElementById('debug-output');
-            out.classList.remove('hidden');
-            out.innerHTML = "Pinging Google Sheet...";
-            try {
-                const res = await fetch(STEIN_URL);
-                if(res.ok) {
-                    const data = await res.json();
-                    out.innerHTML = `SUCCESS: Connected!\nFound ${data.length} records in sheet.`;
-                    out.classList.add('text-green-500');
-                } else {
-                    out.innerHTML = `ERROR: HTTP ${res.status}\n${res.statusText}`;
-                    out.classList.add('text-red-500');
-                }
-            } catch(e) {
-                out.innerHTML = `CRITICAL FAILURE:\n${e.message}`;
-                out.classList.add('text-red-500');
-            }
-        }
-
         function render(html) { document.getElementById('main-container').innerHTML = html; lucide.createIcons(); }
         function setActiveNav(idx) { document.querySelectorAll('.nav-item').forEach((el, i) => i === idx ? el.classList.add('active') : el.classList.remove('active')); }
         function upG(idx) { const w = document.getElementById(`w-${idx}`).value; const r = document.getElementById(`r-${idx}`).value; const el = document.getElementById(`g-${idx}`); el.innerText = w && r ? (w * (1 + r/30)).toFixed(1) : '0'; }
         function exp() { let c = "date,workoutId,exercise,weight,reps,e1rm\n"; state.logs.forEach(l => { c += `${l.date},${l.workoutId},${l.exercise},${l.weight},${l.reps},${l.e1rm}\n` }); const b = new Blob([c], {type:'text/csv'}); const u = window.URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = 'osteocoach_data.csv'; a.click(); }
         
-        // --- DEBUG IMPORT LOGIC ---
+        // --- CLEAN IMPORT LOGIC ---
         async function imp(i) {
             const f = i.files[0];
             const r = new FileReader();
             const label = i.parentElement;
             
-            label.innerHTML = "READING...";
-            alert("DEBUG: File selected. Starting read...");
+            label.innerHTML = "UPLOADING...";
+            label.classList.add('animate-pulse');
 
             r.onload = async function(e) {
                 const text = e.target.result.replace(/\r/g, '');
                 const rows = text.split('\n').slice(1);
-                alert(`DEBUG: Found ${rows.length} rows in CSV.`);
-
                 const newEntries = [];
 
                 rows.forEach(row => {
@@ -329,19 +307,13 @@
                     }
                 });
 
-                alert(`DEBUG: Identified ${newEntries.length} NEW records to upload.`);
-
                 if(newEntries.length > 0) {
-                    label.innerHTML = "SENDING...";
                     try {
-                        alert("DEBUG: Sending POST request to SteinHQ...");
                         const response = await fetch(STEIN_URL, {
                             method: 'POST',
                             headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify(newEntries)
                         });
-
-                        alert(`DEBUG: Server responded with Status ${response.status}`);
 
                         if (!response.ok) {
                             throw new Error(`Server Error: ${response.status}`);
@@ -351,12 +323,13 @@
                         location.reload();
                     } catch(err) {
                         console.error(err);
-                        alert(`CRITICAL ERROR: ${err.message}`);
+                        alert(`UPLOAD FAILED: Error ${err.message}. \n\nCHECK: Headers must be 'date', 'workoutId', 'exercise', 'weight', 'reps', 'e1rm'`);
                         label.innerHTML = "FAILED";
                     }
                 } else {
                     alert("No new unique records found. Nothing to upload.");
                     label.innerHTML = "IMPORT";
+                    label.classList.remove('animate-pulse');
                 }
             };
             r.readAsText(f);
