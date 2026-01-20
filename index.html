@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OsteoCoach v11.0</title>
+    <title>OsteoCoach v12.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -25,7 +25,6 @@
         .selected-option { border-color: #3b82f6 !important; background-color: rgba(59, 130, 246, 0.1) !important; }
         .pulse-ring { animation: pulse-ring 2s infinite; }
         @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
-        
         /* Calendar Styles */
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; }
         .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; font-size: 14px; position: relative; cursor: pointer; transition: background 0.2s; }
@@ -47,7 +46,7 @@
             <div>
                 <div class="flex items-center gap-1">
                     <h1 class="text-lg font-bold tracking-tight leading-none uppercase">OSTEO<span class="text-blue-500">COACH</span></h1>
-                    <span class="text-[9px] text-zinc-500 font-mono border border-zinc-800 px-1 rounded bg-zinc-900/50">v11.0</span>
+                    <span class="text-[9px] text-zinc-500 font-mono border border-zinc-800 px-1 rounded bg-zinc-900/50">v12.0</span>
                 </div>
                 <p class="text-[9px] text-zinc-500 font-bold tracking-widest uppercase">Clinical Strength</p>
             </div>
@@ -66,69 +65,40 @@
         <button class="nav-item" onclick="showSettings()"><i data-lucide="user-cog" class="w-6 h-6"></i><span>Profile</span></button>
     </nav>
 
-    <!-- EXERCISE SWAP MODAL -->
+    <!-- ALL MODALS -->
+    <!-- Swap Modal -->
     <div id="swap-modal" class="fixed inset-0 bg-black/90 z-[60] hidden flex items-center justify-center p-4">
         <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 w-full max-w-sm">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="font-bold text-xl">Swap Exercise</h3>
-                <button onclick="closeSwap()" class="text-zinc-500"><i data-lucide="x"></i></button>
-            </div>
+            <div class="flex justify-between items-center mb-6"><h3 class="font-bold text-xl">Swap Exercise</h3><button onclick="closeSwap()" class="text-zinc-500"><i data-lucide="x"></i></button></div>
             <div id="swap-options" class="space-y-3"></div>
         </div>
     </div>
-
-    <!-- WORKOUT SELECTOR MODAL -->
+    <!-- Workout Selector Modal -->
     <div id="workout-modal" class="fixed inset-0 bg-black/90 z-[60] hidden flex items-center justify-center p-4">
         <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 w-full max-w-sm">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="font-bold text-xl">Change Workout</h3>
-                <button onclick="document.getElementById('workout-modal').classList.add('hidden')" class="text-zinc-500"><i data-lucide="x"></i></button>
-            </div>
+            <div class="flex justify-between items-center mb-6"><h3 class="font-bold text-xl">Change Workout</h3><button onclick="document.getElementById('workout-modal').classList.add('hidden')" class="text-zinc-500"><i data-lucide="x"></i></button></div>
             <p class="text-xs text-zinc-500 mb-4">Override the auto-schedule for today.</p>
             <div id="workout-options" class="space-y-3"></div>
         </div>
     </div>
-
-    <!-- MANUAL LOG MODAL -->
+    <!-- Manual Log Modal -->
     <div id="manual-modal" class="fixed inset-0 bg-black/90 z-[65] hidden flex items-center justify-center p-4">
         <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 w-full max-w-sm">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="font-bold text-xl">Log Entry</h3>
-                <button onclick="closeManual()" class="text-zinc-500"><i data-lucide="x"></i></button>
-            </div>
-            <div class="mb-4">
-                <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Date</label>
-                <input type="date" id="manual-date" class="input-dark w-full text-left">
-            </div>
-            <div class="mb-4">
-                <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Exercise</label>
-                <select id="manual-exercise" class="input-dark w-full text-left"></select>
-            </div>
-            <div class="flex gap-3 mb-6">
-                <div class="flex-1"><label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Weight</label><input type="number" id="manual-weight" class="input-dark" placeholder="kg"></div>
-                <div class="flex-1"><label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Reps</label><input type="number" id="manual-reps" class="input-dark" placeholder="0"></div>
-            </div>
+            <div class="flex justify-between items-center mb-6"><h3 class="font-bold text-xl">Log Entry</h3><button onclick="closeManual()" class="text-zinc-500"><i data-lucide="x"></i></button></div>
+            <div class="mb-4"><label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Date</label><input type="date" id="manual-date" class="input-dark w-full text-left"></div>
+            <div class="mb-4"><label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Exercise</label><select id="manual-exercise" class="input-dark w-full text-left"></select></div>
+            <div class="flex gap-3 mb-6"><div class="flex-1"><label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Weight</label><input type="number" id="manual-weight" class="input-dark" placeholder="kg"></div><div class="flex-1"><label class="text-[10px] font-bold text-zinc-500 uppercase block mb-1">Reps</label><input type="number" id="manual-reps" class="input-dark" placeholder="0"></div></div>
             <button onclick="saveManualLog()" class="btn btn-primary">SAVE ENTRY</button>
         </div>
     </div>
-
-    <!-- E1RM INFO MODAL -->
+    <!-- e1RM Info Modal -->
     <div id="e1rm-modal" class="fixed inset-0 bg-black/95 z-[70] hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 w-full max-w-sm relative shadow-2xl">
             <button onclick="document.getElementById('e1rm-modal').classList.add('hidden')" class="absolute top-4 right-4 text-zinc-500 hover:text-white"><i data-lucide="x"></i></button>
-            <div class="flex items-center gap-3 mb-4">
-                <div class="bg-blue-900/30 p-2 rounded-lg"><i data-lucide="calculator" class="text-blue-400 w-6 h-6"></i></div>
-                <h3 class="font-bold text-xl text-white">Metrics Explained</h3>
-            </div>
+            <div class="flex items-center gap-3 mb-4"><div class="bg-blue-900/30 p-2 rounded-lg"><i data-lucide="calculator" class="text-blue-400 w-6 h-6"></i></div><h3 class="font-bold text-xl text-white">Metrics Explained</h3></div>
             <div class="space-y-4">
-                <div class="bg-blue-900/10 border border-blue-900 p-3 rounded-lg">
-                    <div class="text-xs text-blue-400 font-bold mb-1">BLUE LINE: e1RM</div>
-                    <p class="text-zinc-400 text-xs">Estimated 1-Rep Max. A theoretical calculation of your max strength. Good for tracking "Hidden Progress."</p>
-                </div>
-                <div class="bg-emerald-900/10 border border-emerald-900 p-3 rounded-lg">
-                    <div class="text-xs text-emerald-400 font-bold mb-1">GREEN LINE: REAL WEIGHT</div>
-                    <p class="text-zinc-400 text-xs">The actual weight on the bar. Tracking this shows your "Real World" progression.</p>
-                </div>
+                <div class="bg-blue-900/10 border border-blue-900 p-3 rounded-lg"><div class="text-xs text-blue-400 font-bold mb-1">BLUE LINE: e1RM</div><p class="text-zinc-400 text-xs">Estimated 1-Rep Max. A theoretical calculation of your max strength.</p></div>
+                <div class="bg-emerald-900/10 border border-emerald-900 p-3 rounded-lg"><div class="text-xs text-emerald-400 font-bold mb-1">GREEN LINE: REAL WEIGHT</div><p class="text-zinc-400 text-xs">The actual weight on the bar. Tracking this shows your "Real World" progression.</p></div>
             </div>
         </div>
     </div>
@@ -167,6 +137,7 @@
             'Side Plank (R)': ['Pallof Press', 'Suitcase Carry', 'Clamshell']
         };
 
+        // --- WORKOUT POOLS ---
         const WORKOUT_POOLS = {
             1: { 'A': { name: 'Full Body Reset', focus: 'Efficiency', exercises: [{n:'Leg Press', t:'Safe Load'}, {n:'Chest-Supported Row', t:'Heavy'}, {n:'Bench Press', t:'Safe Load'}, {n:'Lat Pulldown', t:'Vertical'}, {n:'Glute Bridge', t:'Hinge'}, {n:'Dead Bug', t:'Core'}] } },
             2: { 'A': { name: 'Full Body Push + Legs', focus: 'Global Strength', exercises: [{n:'Leg Press', t:'Safe Load'}, {n:'Bench Press', t:'Safe Load'}, {n:'Leg Extension', t:'2s Pause'}, {n:'Seated Lateral Raise', t:'Control'}, {n:'Calf Raise', t:'Volume'}] }, 'B': { name: 'Full Body Pull + Hinge', focus: 'Posterior Chain', exercises: [{n:'Chest-Supported Row', t:'Anti-Flexion'}, {n:'Lying Leg Curl', t:'Hips Down'}, {n:'Lat Pulldown', t:'Traction'}, {n:'Glute Bridge', t:'Squeeze'}, {n:'Incline Bicep Curl', t:'Stretch'}] } },
@@ -184,8 +155,10 @@
             { name: "McGill Curl-Up", duration: 10, cue: "Hands under back. 1 inch lift only.", icon: "check-circle" }
         ];
 
+        // --- STATE ---
         let state = { logs: [], currentWorkoutId: 'A', painLevel: 0, warmupStep: 0, userProfile: null, customRoutine: {}, historyViewDate: new Date().toISOString().split('T')[0] };
 
+        // --- INIT ---
         async function init() {
             lucide.createIcons();
             const localUser = localStorage.getItem('pf_user');
@@ -226,26 +199,49 @@
             state.currentWorkoutId = keys[nextIndex];
         }
 
-        // --- NEW HELPER: Get Exercise Stats ---
+        // --- ONBOARDING ---
+        let onboardingData = { trigger: '', frequency: 3 };
+        function renderOnboarding() { document.getElementById('main-container').innerHTML = `<div class="fade-in pt-10 text-center px-4 pb-20"><div class="mb-8"><h1 class="text-3xl font-black text-white mb-2">Welcome to OsteoCoach</h1><p class="text-zinc-400">Let's build your spine-safe protocol.</p></div><div id="step-1" class="card mb-6 text-left"><h3 class="font-bold text-lg mb-4 text-blue-400">1. Pain Trigger?</h3><div class="space-y-3"><button onclick="selectTrigger(this, 'flexion')" class="opt-btn w-full p-4 rounded-xl border border-zinc-700 bg-zinc-900 transition text-left flex items-center gap-4"><div class="bg-blue-900/30 p-2 rounded-lg"><i data-lucide="arrow-down-to-line" class="text-blue-400"></i></div><div><div class="font-bold">Bending Forward</div><div class="text-xs text-zinc-500">Sitting, Tying shoes</div></div></button><button onclick="selectTrigger(this, 'extension')" class="opt-btn w-full p-4 rounded-xl border border-zinc-700 bg-zinc-900 transition text-left flex items-center gap-4"><div class="bg-orange-900/30 p-2 rounded-lg"><i data-lucide="arrow-up-to-line" class="text-orange-400"></i></div><div><div class="font-bold">Arching Back</div><div class="text-xs text-zinc-500">Standing, Reaching up</div></div></button><button onclick="selectTrigger(this, 'compression')" class="opt-btn w-full p-4 rounded-xl border border-zinc-700 bg-zinc-900 transition text-left flex items-center gap-4"><div class="bg-red-900/30 p-2 rounded-lg"><i data-lucide="weight" class="text-red-400"></i></div><div><div class="font-bold">Impact / Loading</div><div class="text-xs text-zinc-500">Weights in front, Landing</div></div></button></div></div><div id="step-2" class="card mb-6 text-left opacity-50 pointer-events-none transition"><h3 class="font-bold text-lg mb-4 text-blue-400">2. Days Per Week?</h3><div class="grid grid-cols-4 gap-2 mb-2"><button onclick="selectFreq(this, 1)" class="freq-btn p-3 rounded-lg border border-zinc-700 bg-zinc-900 font-bold hover:border-blue-500 transition">1</button><button onclick="selectFreq(this, 2)" class="freq-btn p-3 rounded-lg border border-zinc-700 bg-zinc-900 font-bold hover:border-blue-500 transition">2</button><button onclick="selectFreq(this, 3)" class="freq-btn p-3 rounded-lg border border-zinc-700 bg-zinc-900 font-bold hover:border-blue-500 transition">3</button><button onclick="selectFreq(this, 4)" class="freq-btn p-3 rounded-lg border border-zinc-700 bg-zinc-900 font-bold hover:border-blue-500 transition">4</button></div><div class="grid grid-cols-3 gap-2"><button onclick="selectFreq(this, 5)" class="freq-btn p-3 rounded-lg border border-zinc-700 bg-zinc-900 font-bold hover:border-blue-500 transition">5</button><button onclick="selectFreq(this, 6)" class="freq-btn p-3 rounded-lg border border-zinc-700 bg-zinc-900 font-bold hover:border-blue-500 transition">6</button><button onclick="selectFreq(this, 7)" class="freq-btn p-3 rounded-lg border border-zinc-700 bg-zinc-900 font-bold hover:border-blue-500 transition">7</button></div></div><button onclick="finishOnboarding()" id="finish-btn" disabled class="btn btn-secondary w-full py-4 text-zinc-500 font-bold">COMPLETE SETUP</button></div>`; lucide.createIcons(); document.querySelector('.nav-bar').classList.add('hidden'); }
+        function selectTrigger(btn, val) { onboardingData.trigger = val; document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected-option', 'border-blue-500')); btn.classList.add('selected-option', 'border-blue-500'); document.getElementById('step-2').classList.remove('opacity-50', 'pointer-events-none'); }
+        function selectFreq(btn, val) { onboardingData.frequency = val; document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('selected-option', 'border-blue-500')); btn.classList.add('selected-option', 'border-blue-500'); const finish = document.getElementById('finish-btn'); finish.disabled = false; finish.classList.replace('btn-secondary', 'btn-primary'); finish.classList.remove('text-zinc-500'); finish.classList.add('text-white', 'shadow-lg'); }
+        function finishOnboarding() { state.userProfile = onboardingData; localStorage.setItem('pf_user', JSON.stringify(state.userProfile)); document.querySelector('.nav-bar').classList.remove('hidden'); state.currentWorkoutId = 'A'; goHome(); }
+
+        // --- HOME & CORE ---
+        function goHome() {
+            setActiveNav(0);
+            const wId = state.currentWorkoutId;
+            const freq = state.userProfile?.frequency || 4;
+            const pool = WORKOUT_POOLS[freq] || WORKOUT_POOLS[4];
+            const workoutName = (pool && pool[wId]) ? pool[wId].name : 'Unknown Workout';
+            render(`
+                <div class="fade-in pt-4">
+                    <div class="mb-10 text-center"><h2 class="text-3xl font-bold text-white mb-2">Welcome Back</h2><div class="inline-flex items-center gap-2 bg-zinc-900 pl-4 pr-1 py-1 rounded-full border border-zinc-800"><div class="flex flex-col text-left"><span class="text-zinc-500 text-[9px] font-bold uppercase">Target Session</span><span class="text-blue-400 font-black text-sm uppercase tracking-wide leading-none">${workoutName}</span></div><button onclick="openWorkoutSelector()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-400 p-2 rounded-full transition"><i data-lucide="arrow-right-left" class="w-4 h-4"></i></button></div></div>
+                    <div class="card mb-6 bg-zinc-900 border-blue-900/20"><h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="shield-check" class="text-blue-500"></i> Spinal Readiness</h3><div class="grid grid-cols-5 gap-2">${[1,2,3,4,5,6,7,8,9,10].map(n => `<button onclick="handlePain(${n})" class="h-12 rounded-lg font-bold border ${n<=3 ? 'border-blue-600 bg-blue-900/10' : n<=7 ? 'border-orange-600 bg-orange-900/10' : 'border-red-600 bg-red-900/10'} transition-all active:scale-90">${n}</button>`).join('')}</div></div>
+                    <div class="grid grid-cols-2 gap-4"><button onclick="startWarmup()" class="card flex flex-col items-center justify-center gap-3 hover:bg-zinc-800 transition"><div class="bg-blue-500/10 p-4 rounded-full"><i data-lucide="zap" class="text-blue-400"></i></div><span class="font-bold text-sm">Warmup</span></button><button onclick="showStats()" class="card flex flex-col items-center justify-center gap-3 hover:bg-zinc-800 transition"><div class="bg-purple-500/10 p-4 rounded-full"><i data-lucide="line-chart" class="text-purple-400"></i></div><span class="font-bold text-sm">Analytics</span></button></div>
+                </div>
+            `);
+        }
+
+        function handlePain(level) { state.painLevel = level; if (level <= 3) renderWorkout(state.currentWorkoutId); else if (level <= 7) renderRecovery(); else renderEmergency(); }
+        function startWarmup() { state.warmupStep = 0; renderWarmupStep(); }
+        function renderWarmupStep() { const step = WARMUP_STEPS[state.warmupStep]; if(!step) { goHome(); return; } render(`<div class="fade-in pt-8 text-center flex flex-col justify-between h-[70vh]"><div><div class="text-xs font-bold text-blue-500 mb-6 tracking-widest uppercase">${state.warmupStep + 1} / ${WARMUP_STEPS.length}</div><h2 class="text-3xl font-black mb-2">${step.name}</h2><p class="text-zinc-400 mb-10 px-6">${step.cue}</p><div class="timer-circle" id="timer-box"><div id="timer-val">${step.duration}</div></div></div><div><button id="timer-btn" onclick="runTimer(${step.duration})" class="btn btn-primary py-5 text-lg">START TIMER</button><button onclick="goHome()" class="mt-6 text-zinc-600 font-bold text-xs uppercase tracking-widest">Abort</button></div></div>`); }
+        function runTimer(sec) { const val = document.getElementById('timer-val'); const box = document.getElementById('timer-box'); document.getElementById('timer-btn').classList.add('hidden'); box.classList.add('pulse-ring', 'border-blue-500'); let left = sec; const int = setInterval(() => { left--; val.innerText = left; if(left <= 0) { clearInterval(int); state.warmupStep++; if(state.warmupStep < WARMUP_STEPS.length) renderWarmupStep(); else renderWorkout(state.currentWorkoutId); } }, 1000); }
+
+        // --- WORKOUT ENGINE ---
         function getExStats(name) {
             const exLogs = state.logs.filter(l => l.exercise === name);
             if (exLogs.length === 0) return { best: 0, last: null };
-            
-            // Calc PB
             const best = Math.max(...exLogs.map(l => parseFloat(l.e1rm)));
-            
-            // Find Last Session (Not today)
             const today = new Date().toISOString().split('T')[0];
             const sorted = [...exLogs].sort((a,b) => new Date(b.date) - new Date(a.date));
             const lastSession = sorted.find(l => l.date !== today);
-            
             return { best, last: lastSession };
         }
 
-        // --- WORKOUT ENGINE (UPDATED) ---
         function renderWorkout(wId) {
             const freq = state.userProfile?.frequency || 4;
-            const baseW = WORKOUT_POOLS[freq][wId];
+            const pool = WORKOUT_POOLS[freq] || WORKOUT_POOLS[4];
+            const baseW = pool[wId];
             const today = new Date().toISOString().split('T')[0];
             
             let html = `<div class="fade-in pt-4 pb-10"><h2 class="text-3xl font-black mb-2 uppercase tracking-tight">${baseW.name}</h2><p class="text-zinc-500 text-xs mb-6 uppercase tracking-widest">${baseW.focus}</p>`;
@@ -254,220 +250,57 @@
                 const slotKey = `${freq}-${wId}-${idx}`;
                 const exerciseName = state.customRoutine[slotKey] || baseEx.n;
                 const tag = getDynamicTag(exerciseName, baseEx.t);
-                
-                // Get Stats
                 const stats = getExStats(exerciseName);
                 const todaysLogs = state.logs.filter(l => l.date === today && l.exercise === exerciseName);
                 const nextSetNum = todaysLogs.length + 1;
 
                 html += `
                 <div class="card mb-4 border-l-4 border-l-blue-500">
-                    <!-- HEADER -->
                     <div class="flex justify-between items-start mb-3">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-lg leading-tight">${exerciseName}</h3>
-                                <button onclick="openSwap('${wId}', ${idx}, '${exerciseName}')" class="text-zinc-600 hover:text-blue-400 transition"><i data-lucide="refresh-cw" class="w-3 h-3"></i></button>
-                            </div>
-                            <span class="text-[10px] font-bold text-blue-400 uppercase tracking-tighter">${tag}</span>
-                        </div>
+                        <div><div class="flex items-center gap-2"><h3 class="font-bold text-lg leading-tight">${exerciseName}</h3><button onclick="openSwap('${wId}', ${idx}, '${exerciseName}')" class="text-zinc-600 hover:text-blue-400 transition"><i data-lucide="refresh-cw" class="w-3 h-3"></i></button></div><span class="text-[10px] font-bold text-blue-400 uppercase tracking-tighter">${tag}</span></div>
                     </div>
-
-                    <!-- SMART CONTEXT BAR (NEW) -->
-                    <div class="bg-zinc-900/80 rounded-lg p-2 flex justify-between items-center mb-4 text-xs">
-                        <div class="flex items-center gap-1.5 text-yellow-500 font-bold">
-                            <i data-lucide="trophy" class="w-3 h-3"></i>
-                            <span>PB: ${stats.best > 0 ? stats.best + 'kg' : '--'}</span>
-                        </div>
-                        <div class="flex items-center gap-1.5 text-zinc-400 font-medium">
-                            <i data-lucide="history" class="w-3 h-3"></i>
-                            <span>Last: ${stats.last ? `${stats.last.weight}kg x ${stats.last.reps}` : '--'}</span>
-                        </div>
-                    </div>
+                    <!-- Smart Context Bar -->
+                    <div class="bg-zinc-900/80 rounded-lg p-2 flex justify-between items-center mb-4 text-xs"><div class="flex items-center gap-1.5 text-yellow-500 font-bold"><i data-lucide="trophy" class="w-3 h-3"></i><span>PB: ${stats.best > 0 ? stats.best + 'kg' : '--'}</span></div><div class="flex items-center gap-1.5 text-zinc-400 font-medium"><i data-lucide="history" class="w-3 h-3"></i><span>Last: ${stats.last ? `${stats.last.weight}kg x ${stats.last.reps}` : '--'}</span></div></div>
                     
-                    <!-- SET COUNTER -->
-                    <div class="mb-2 flex items-center gap-2">
-                        <span class="text-xs font-black text-blue-500 bg-blue-900/20 px-2 py-1 rounded">SET ${nextSetNum}</span>
-                        ${todaysLogs.length > 0 ? `<span class="text-[10px] text-zinc-500">${todaysLogs.length} completed</span>` : ''}
-                    </div>
-
-                    <!-- INPUTS -->
-                    <div class="flex gap-3 items-end">
-                        <div class="flex-1"><label class="text-[9px] font-bold text-zinc-600 block mb-1 uppercase">Weight</label><input type="number" id="w-${idx}" class="input-dark" placeholder="${stats.last ? stats.last.weight : '0'}" oninput="upG(${idx})"></div>
-                        <div class="flex-1"><label class="text-[9px] font-bold text-zinc-600 block mb-1 uppercase">Reps</label><input type="number" id="r-${idx}" class="input-dark" placeholder="0" oninput="upG(${idx})"></div>
-                        <div class="w-12 text-center"><div class="text-[9px] font-bold text-zinc-600 mb-2 uppercase">e1RM</div><div id="g-${idx}" class="font-mono text-sm text-zinc-400">0</div></div>
-                    </div>
-                    
+                    <div class="mb-2 flex items-center gap-2"><span class="text-xs font-black text-blue-500 bg-blue-900/20 px-2 py-1 rounded">SET ${nextSetNum}</span>${todaysLogs.length > 0 ? `<span class="text-[10px] text-zinc-500">${todaysLogs.length} completed</span>` : ''}</div>
+                    <div class="flex gap-3 items-end"><div class="flex-1"><label class="text-[9px] font-bold text-zinc-600 block mb-1 uppercase">Weight</label><input type="number" id="w-${idx}" class="input-dark" placeholder="${stats.last ? stats.last.weight : '0'}" oninput="upG(${idx})"></div><div class="flex-1"><label class="text-[9px] font-bold text-zinc-600 block mb-1 uppercase">Reps</label><input type="number" id="r-${idx}" class="input-dark" placeholder="0" oninput="upG(${idx})"></div><div class="w-12 text-center"><div class="text-[9px] font-bold text-zinc-600 mb-2 uppercase">e1RM</div><div id="g-${idx}" class="font-mono text-sm text-zinc-400">0</div></div></div>
                     <button onclick="logSet('${wId}', '${exerciseName}', ${idx}, this)" class="btn btn-secondary mt-4 text-xs font-black uppercase tracking-widest py-3">Log Data Point</button>
-
-                    <!-- SESSION LOG -->
-                    ${todaysLogs.length > 0 ? `
-                        <div class="mt-4 pt-3 border-t border-zinc-800">
-                            <div class="text-[9px] font-bold text-zinc-600 uppercase mb-2">Session History</div>
-                            <div class="space-y-1">
-                                ${todaysLogs.map((l, i) => `
-                                    <div class="flex justify-between text-xs text-zinc-400">
-                                        <span>Set ${i+1}</span>
-                                        <span class="font-mono text-white">${l.weight}kg x ${l.reps}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
+                    ${todaysLogs.length > 0 ? `<div class="mt-4 pt-3 border-t border-zinc-800"><div class="text-[9px] font-bold text-zinc-600 uppercase mb-2">Session History</div><div class="space-y-1">${todaysLogs.map((l, i) => `<div class="flex justify-between text-xs text-zinc-400"><span>Set ${i+1}</span><span class="font-mono text-white">${l.weight}kg x ${l.reps}</span></div>`).join('')}</div></div>` : ''}
                 </div>`;
             });
             html += `<button onclick="location.reload()" class="btn btn-primary py-5 mt-6 mb-10 shadow-xl shadow-blue-900/20">COMPLETE SESSION</button></div>`;
             render(html);
         }
 
-        // --- SWAP LOGIC ---
-        function openSwap(wId, idx, currentName) {
-            let categoryKey = null;
-            if (ALTERNATIVES[currentName]) categoryKey = currentName;
-            if (!categoryKey) { for (const [key, alts] of Object.entries(ALTERNATIVES)) { if (alts.includes(currentName)) { categoryKey = key; break; } } }
-            if (!categoryKey) { alert("No alternatives available for this exercise yet."); return; }
-
-            const options = [categoryKey, ...ALTERNATIVES[categoryKey]];
-            const modal = document.getElementById('swap-modal');
-            const container = document.getElementById('swap-options');
-            
-            container.innerHTML = options.map(opt => `<button onclick="confirmSwap('${wId}', ${idx}, '${opt}')" class="w-full text-left p-3 rounded-lg ${opt === currentName ? 'bg-blue-600 text-white' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'} font-bold text-sm">${opt}</button>`).join('');
-            modal.classList.remove('hidden');
-        }
-
+        // --- UTILS & FEATURES ---
+        function openSwap(wId, idx, currentName) { let categoryKey = null; if (ALTERNATIVES[currentName]) categoryKey = currentName; if (!categoryKey) { for (const [key, alts] of Object.entries(ALTERNATIVES)) { if (alts.includes(currentName)) { categoryKey = key; break; } } } if (!categoryKey) { alert("No alternatives available for this exercise yet."); return; } const options = [categoryKey, ...ALTERNATIVES[categoryKey]]; const modal = document.getElementById('swap-modal'); const container = document.getElementById('swap-options'); container.innerHTML = options.map(opt => `<button onclick="confirmSwap('${wId}', ${idx}, '${opt}')" class="w-full text-left p-3 rounded-lg ${opt === currentName ? 'bg-blue-600 text-white' : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'} font-bold text-sm">${opt}</button>`).join(''); modal.classList.remove('hidden'); }
         function closeSwap() { document.getElementById('swap-modal').classList.add('hidden'); }
-
-        function confirmSwap(wId, idx, newName) {
-            const freq = state.userProfile?.frequency || 4;
-            const slotKey = `${freq}-${wId}-${idx}`;
-            state.customRoutine[slotKey] = newName;
-            localStorage.setItem('pf_routine', JSON.stringify(state.customRoutine));
-            closeSwap();
-            renderWorkout(wId); 
-        }
-
-        // --- SELECTOR LOGIC ---
-        function openWorkoutSelector() {
-            const freq = state.userProfile?.frequency || 4;
-            const pool = WORKOUT_POOLS[freq];
-            const modal = document.getElementById('workout-modal');
-            const container = document.getElementById('workout-options');
-            container.innerHTML = Object.entries(pool).map(([key, data]) => `
-                <button onclick="changeTargetWorkout('${key}')" class="w-full text-left p-4 rounded-xl border ${state.currentWorkoutId === key ? 'border-blue-500 bg-blue-900/20' : 'border-zinc-700 bg-zinc-900 hover:bg-zinc-800'} transition">
-                    <div class="flex justify-between items-center"><div><div class="font-bold text-white text-lg">${data.name}</div><div class="text-xs text-zinc-500 uppercase tracking-widest">${data.focus}</div></div>${state.currentWorkoutId === key ? '<i data-lucide="check-circle" class="text-blue-500"></i>' : ''}</div>
-                </button>`).join('');
-            modal.classList.remove('hidden'); lucide.createIcons();
-        }
+        function confirmSwap(wId, idx, newName) { const freq = state.userProfile?.frequency || 4; const slotKey = `${freq}-${wId}-${idx}`; state.customRoutine[slotKey] = newName; localStorage.setItem('pf_routine', JSON.stringify(state.customRoutine)); closeSwap(); renderWorkout(wId); }
+        function openWorkoutSelector() { const freq = state.userProfile?.frequency || 4; const pool = WORKOUT_POOLS[freq] || WORKOUT_POOLS[4]; const modal = document.getElementById('workout-modal'); const container = document.getElementById('workout-options'); container.innerHTML = Object.entries(pool).map(([key, data]) => `<button onclick="changeTargetWorkout('${key}')" class="w-full text-left p-4 rounded-xl border ${state.currentWorkoutId === key ? 'border-blue-500 bg-blue-900/20' : 'border-zinc-700 bg-zinc-900 hover:bg-zinc-800'} transition"><div class="flex justify-between items-center"><div><div class="font-bold text-white text-lg">${data.name}</div><div class="text-xs text-zinc-500 uppercase tracking-widest">${data.focus}</div></div>${state.currentWorkoutId === key ? '<i data-lucide="check-circle" class="text-blue-500"></i>' : ''}</div></button>`).join(''); modal.classList.remove('hidden'); lucide.createIcons(); }
         function changeTargetWorkout(newId) { state.currentWorkoutId = newId; document.getElementById('workout-modal').classList.add('hidden'); goHome(); }
-
-        // --- CALENDAR ---
-        let currentCalDate = new Date();
-        function showHistory() { setActiveNav(2); renderCalendarView(); }
-        function renderCalendarView() {
-            const year = currentCalDate.getFullYear(); const month = currentCalDate.getMonth();
-            const firstDay = new Date(year, month, 1); const lastDay = new Date(year, month + 1, 0); const daysInMonth = lastDay.getDate(); const startDay = firstDay.getDay(); 
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            const activeDays = new Set(state.logs.map(l => l.date));
-            let html = `<div class="fade-in pt-4 pb-20"><h2 class="text-2xl font-black mb-6 uppercase">History Log</h2><div class="card mb-6"><div class="cal-header"><button onclick="changeMonth(-1)"><i data-lucide="chevron-left"></i></button><span>${monthNames[month]} ${year}</span><button onclick="changeMonth(1)"><i data-lucide="chevron-right"></i></button></div><div class="cal-grid mb-2 text-[10px] text-zinc-500 font-bold uppercase"><div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div></div><div class="cal-grid">`;
-            for(let i=0; i<startDay; i++) { html += `<div></div>`; }
-            for(let d=1; d<=daysInMonth; d++) {
-                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                const isActive = activeDays.has(dateStr); const isSelected = state.historyViewDate === dateStr; const isToday = new Date().toISOString().split('T')[0] === dateStr;
-                html += `<div onclick="selectDate('${dateStr}')" class="cal-day ${isSelected ? 'active' : ''} ${isToday ? 'today' : ''}">${d}${isActive ? `<div class="cal-dot"></div>` : ''}</div>`;
-            }
-            html += `</div></div><div class="flex justify-between items-center mb-4"><h3 class="font-bold text-lg text-white">${new Date(state.historyViewDate).toDateString()}</h3><button onclick="openManualLog('${state.historyViewDate}')" class="text-xs bg-blue-900/30 text-blue-400 px-3 py-1 rounded-lg border border-blue-800 font-bold flex items-center gap-1"><i data-lucide="plus" class="w-3 h-3"></i> Add Log</button></div>`;
-            const daysLogs = state.logs.filter(l => l.date === state.historyViewDate).reverse();
-            if(daysLogs.length > 0) { html += `<div class="space-y-2">`; daysLogs.forEach(l => { html += `<div class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl flex justify-between items-center"><div><div class="font-bold text-sm text-white">${l.exercise}</div><div class="text-[10px] text-zinc-500">${l.workoutId} Session</div></div><div class="font-mono text-blue-400 text-sm font-bold">${l.weight}kg x ${l.reps}</div></div>`; }); html += `</div>`; } else { html += `<div class="text-center text-zinc-500 py-10 text-sm">No workouts logged this day.</div>`; }
-            html += `</div>`; render(html);
-        }
-        function changeMonth(dir) { currentCalDate.setMonth(currentCalDate.getMonth() + dir); renderCalendarView(); }
-        function selectDate(dateStr) { state.historyViewDate = dateStr; renderCalendarView(); }
-
-        // --- MANUAL LOG ---
-        function openManualLog(dateStr) { const modal = document.getElementById('manual-modal'); document.getElementById('manual-date').value = dateStr; const allExercises = new Set(Object.keys(ALTERNATIVES)); Object.values(ALTERNATIVES).forEach(list => list.forEach(ex => allExercises.add(ex))); const select = document.getElementById('manual-exercise'); select.innerHTML = [...allExercises].sort().map(ex => `<option value="${ex}">${ex}</option>`).join(''); modal.classList.remove('hidden'); }
-        function closeManual() { document.getElementById('manual-modal').classList.add('hidden'); }
-        async function saveManualLog() {
-            const date = document.getElementById('manual-date').value; const ex = document.getElementById('manual-exercise').value; const w = document.getElementById('manual-weight').value; const r = document.getElementById('manual-reps').value;
-            if(!date || !ex || !w || !r) { alert("Please fill all fields"); return; }
-            const ghost = (w * (1 + r/30)).toFixed(1); const entry = { date: date, workoutId: 'M', exercise: ex, weight: w, reps: r, e1rm: ghost };
-            state.logs.push(entry); localStorage.setItem('pf_backup', JSON.stringify(state.logs)); closeManual(); renderCalendarView();
-            try { await fetch(STEIN_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify([entry]) }); } catch(e) { console.error('Sync failed'); }
-        }
-
-        // --- ONBOARDING & HOME ---
-        function renderOnboarding() { document.getElementById('main-container').innerHTML = `<div class="fade-in pt-10 text-center px-4 pb-20"><div class="mb-8"><h1 class="text-3xl font-black text-white mb-2">Welcome to OsteoCoach</h1><p class="text-zinc-400">Let's build your spine-safe protocol.</p></div><div id="step-1" class="card mb-6 text-left"><h3 class="font-bold text-lg mb-4 text-blue-400">1. Pain Trigger?</h3><div class="space-y-3"><button onclick="selectTrigger(this, 'flexion')" class="opt-btn w-full p-4 rounded-xl border border-zinc-700 bg-zinc-900 transition text-left flex items-center gap-4"><div class="bg-blue-900/30 p-2 rounded-lg"><i data-lucide="arrow-down-to-line" class="text-blue-400"></i></div><div><div class="font-bold">Bending Forward</div><div class="text-xs text-zinc-500">Sitting, Tying shoes</div></div></button><button onclick="selectTrigger(this, 'extension')" class="opt-btn w-full p-4 rounded-xl border border-zinc-700 bg-zinc-900 transition text-left flex items-center gap-4"><div class="bg-orange-900/30 p-2 rounded-lg"><i data-lucide="arrow-up-to-line" class="text-orange-400"></i></div><div><div class="font-bold">Arching Back</div><div class="text-xs text-zinc-500">Standing, Reaching up</div></div></button><button onclick="selectTrigger(this, 'compression')" class="opt-btn w-full p-4 rounded-xl border border-zinc-700 bg-zinc-900 transition text-left flex items-center gap-4"><div class="bg-red-900/30 p-2 rounded-lg"><i data-lucide="weight" class="text-red-400"></i></div><div><div class="font-bold">Impact / Loading</div><div class="text-xs text-zinc-500">Weights in front, Landing</div></div></button></div></div><div id="step-2" class="card mb-6 text-left opacity-50 pointer-events-none transition"><h3 class="font-bold text-lg mb-4 text-blue-400">2. Days Per Week?</h3><div class="grid grid-cols-4 gap-2 mb-2"><button onclick="selectFreq(this, 1)" class="freq-btn p-3 rounded-lg border border-zinc-700 bg-zinc-900 font-bold hover:border-blue-500 transition">1</button><button onclick="selectFreq(this, 2)" class="freq-btn p-3 rounded-lg border border-zinc-700 bg-zinc-900 font-bold hover:border-blue-500 transition">2</button><button onclick="selectFreq(this, 3)" class="freq-btn p-3 rounded-lg border border-zinc-700 bg-zinc-900 font-bold hover:border-blue-500 transition">3</button><button onclick="selectFreq(this, 4)" class="freq-btn p-3 rounded-lg border border-zinc-700 bg-zinc-900 font-bold hover:border-blue-500 transition">4</button></div><div class="grid grid-cols-3 gap-2"><button onclick="selectFreq(this, 5)" class="freq-btn p-3 rounded-lg border border-zinc-700 bg-zinc-900 font-bold hover:border-blue-500 transition">5</button><button onclick="selectFreq(this, 6)" class="freq-btn p-3 rounded-lg border border-zinc-700 bg-zinc-900 font-bold hover:border-blue-500 transition">6</button><button onclick="selectFreq(this, 7)" class="freq-btn p-3 rounded-lg border border-zinc-700 bg-zinc-900 font-bold hover:border-blue-500 transition">7</button></div></div><button onclick="finishOnboarding()" id="finish-btn" disabled class="btn btn-secondary w-full py-4 text-zinc-500 font-bold">COMPLETE SETUP</button></div>`; lucide.createIcons(); document.querySelector('.nav-bar').classList.add('hidden'); }
-        let onboardingData = { trigger: '', frequency: 3 };
-        function selectTrigger(btn, val) { onboardingData.trigger = val; document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected-option', 'border-blue-500')); btn.classList.add('selected-option', 'border-blue-500'); document.getElementById('step-2').classList.remove('opacity-50', 'pointer-events-none'); }
-        function selectFreq(btn, val) { onboardingData.frequency = val; document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('selected-option', 'border-blue-500')); btn.classList.add('selected-option', 'border-blue-500'); const finish = document.getElementById('finish-btn'); finish.disabled = false; finish.classList.replace('btn-secondary', 'btn-primary'); finish.classList.remove('text-zinc-500'); finish.classList.add('text-white', 'shadow-lg'); }
-        function finishOnboarding() { state.userProfile = onboardingData; localStorage.setItem('pf_user', JSON.stringify(state.userProfile)); document.querySelector('.nav-bar').classList.remove('hidden'); state.currentWorkoutId = 'A'; goHome(); }
-
-        function goHome() {
-            setActiveNav(0);
-            const wId = state.currentWorkoutId;
-            const freq = state.userProfile?.frequency || 4;
-            const workoutName = (WORKOUT_POOLS[freq] && WORKOUT_POOLS[freq][wId]) ? WORKOUT_POOLS[freq][wId].name : 'Unknown Workout';
-            render(`
-                <div class="fade-in pt-4">
-                    <div class="mb-10 text-center">
-                        <h2 class="text-3xl font-bold text-white mb-2">Welcome Back</h2>
-                        <div class="inline-flex items-center gap-2 bg-zinc-900 pl-4 pr-1 py-1 rounded-full border border-zinc-800">
-                            <div class="flex flex-col text-left"><span class="text-zinc-500 text-[9px] font-bold uppercase">Target Session</span><span class="text-blue-400 font-black text-sm uppercase tracking-wide leading-none">${workoutName}</span></div>
-                            <button onclick="openWorkoutSelector()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-400 p-2 rounded-full transition"><i data-lucide="arrow-right-left" class="w-4 h-4"></i></button>
-                        </div>
-                    </div>
-                    <div class="card mb-6 bg-zinc-900 border-blue-900/20"><h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="shield-check" class="text-blue-500"></i> Spinal Readiness</h3><div class="grid grid-cols-5 gap-2">${[1,2,3,4,5,6,7,8,9,10].map(n => `<button onclick="handlePain(${n})" class="h-12 rounded-lg font-bold border ${n<=3 ? 'border-blue-600 bg-blue-900/10' : n<=7 ? 'border-orange-600 bg-orange-900/10' : 'border-red-600 bg-red-900/10'} transition-all active:scale-90">${n}</button>`).join('')}</div></div>
-                    <div class="grid grid-cols-2 gap-4"><button onclick="startWarmup()" class="card flex flex-col items-center justify-center gap-3 hover:bg-zinc-800 transition"><div class="bg-blue-500/10 p-4 rounded-full"><i data-lucide="zap" class="text-blue-400"></i></div><span class="font-bold text-sm">Warmup</span></button><button onclick="showStats()" class="card flex flex-col items-center justify-center gap-3 hover:bg-zinc-800 transition"><div class="bg-purple-500/10 p-4 rounded-full"><i data-lucide="line-chart" class="text-purple-400"></i></div><span class="font-bold text-sm">Analytics</span></button></div>
-                </div>
-            `);
-        }
-
-        // --- TAGS & SETTINGS ---
         function getDynamicTag(exName, defaultTag) { const p = state.userProfile?.trigger; if (p === 'flexion') { if (exName.includes('Leg Press')) return "STOP BEFORE HIPS CURL"; if (exName.includes('Row')) return "FLAT BACK - STRICT"; if (exName.includes('Dead')) return "NEUTRAL SPINE ONLY"; } if (p === 'extension') { if (exName.includes('Press') && !exName.includes('Leg')) return "RIBS DOWN - CORE TIGHT"; if (exName.includes('Extension')) return "NO ARCHING"; } if (p === 'compression') { if (exName.includes('Press')) return "SLOW TEMPO - NO BOUNCE"; if (exName.includes('Row')) return "CHEST SUPPORTED ONLY"; } return defaultTag; }
+        
         function showSettings() { setActiveNav(3); render(`<div class="fade-in pt-4"><h2 class="text-2xl font-black mb-6 uppercase">User Profile</h2><div class="card mb-6"><h3 class="font-bold text-xs text-zinc-500 mb-4 uppercase tracking-widest">Configuration</h3><div class="flex items-center gap-4 bg-zinc-900 p-4 rounded-xl border border-zinc-800 mb-3"><div class="bg-blue-900/20 p-3 rounded-full text-blue-500 font-black text-xl">${state.userProfile?.trigger === 'flexion' ? '<i data-lucide="arrow-down-to-line"></i>' : state.userProfile?.trigger === 'extension' ? '<i data-lucide="arrow-up-to-line"></i>' : '<i data-lucide="weight"></i>'}</div><div><div class="font-bold capitalize text-white">${state.userProfile?.trigger} Trigger</div><div class="text-xs text-zinc-500">Safety tags active.</div></div></div><div class="flex items-center gap-4 bg-zinc-900 p-4 rounded-xl border border-zinc-800"><div class="bg-purple-900/20 p-3 rounded-full text-purple-500 font-black text-xl"><i data-lucide="calendar"></i></div><div><div class="font-bold capitalize text-white">${state.userProfile?.frequency} Days / Week</div><div class="text-xs text-zinc-500">Split type: ${state.userProfile?.frequency === 1 ? 'Sunday Saver' : state.userProfile?.frequency === 2 ? 'Full Body' : state.userProfile?.frequency === 3 ? 'Hybrid' : state.userProfile?.frequency === 7 ? 'Daily Grinder' : 'Split'}</div></div></div><button onclick="localStorage.removeItem('pf_user'); location.reload()" class="mt-4 text-xs text-red-500 underline w-full text-center">Reset Profile & Onboarding</button></div><div class="card mb-6"><h3 class="font-bold text-xs text-zinc-500 mb-4 uppercase tracking-widest">Customizations</h3><div class="text-sm text-zinc-400 mb-4">You have customized <b>${Object.keys(state.customRoutine).length}</b> exercises.</div><button onclick="localStorage.removeItem('pf_routine'); location.reload()" class="btn btn-secondary text-xs">Reset All Swaps</button></div><div class="card"><h3 class="font-bold mb-4">Data Management</h3><div class="grid grid-cols-2 gap-3"><button onclick="exp()" class="btn btn-secondary text-xs">EXPORT</button><label class="btn btn-secondary text-xs cursor-pointer">IMPORT<input type="file" class="hidden" accept=".csv" onchange="imp(this)"></label></div></div></div>`); }
-
-        // --- UTILS ---
         function render(html) { document.getElementById('main-container').innerHTML = html; lucide.createIcons(); }
         function setActiveNav(idx) { document.querySelectorAll('.nav-item').forEach((el, i) => i === idx ? el.classList.add('active') : el.classList.remove('active')); }
         function upG(idx) { const w = document.getElementById(`w-${idx}`).value; const r = document.getElementById(`r-${idx}`).value; const el = document.getElementById(`g-${idx}`); el.innerText = w && r ? (w * (1 + r/30)).toFixed(1) : '0'; }
         function exp() { let c = "date,workoutId,exercise,weight,reps,e1rm\n"; state.logs.forEach(l => { c += `${l.date},${l.workoutId},${l.exercise},${l.weight},${l.reps},${l.e1rm}\n` }); const b = new Blob([c], {type:'text/csv'}); const u = window.URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = 'osteocoach_data.csv'; a.click(); }
-        
-        async function logSet(wId, ex, idx, btn) {
-            const w = document.getElementById(`w-${idx}`).value; const r = document.getElementById(`r-${idx}`).value; if(!w || !r) return;
-            const ghost = (w * (1 + r/30)).toFixed(1);
-            const entry = { date: new Date().toISOString().split('T')[0], workoutId: wId, exercise: ex, weight: w, reps: r, e1rm: ghost };
-            state.logs.push(entry); localStorage.setItem('pf_backup', JSON.stringify(state.logs)); renderWorkout(wId); 
-            try { await fetch(STEIN_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify([entry]) }); } catch(e) { console.error('Sync failed'); }
-        }
-
-        async function imp(i) {
-            const f = i.files[0]; const r = new FileReader(); const label = i.parentElement; label.innerHTML = "UPLOADING..."; label.classList.add('animate-pulse');
-            r.onload = async function(e) {
-                const text = e.target.result.replace(/\r/g, ''); const rows = text.split('\n').slice(1); const newEntries = [];
-                rows.forEach(row => { if(!row.trim()) return; const cols = row.split(','); if (cols.length < 6) return; const [d, wid, ex, w, rep, e1] = cols; if(d && ex) { const isDuplicate = state.logs.some(log => log.date === d.trim() && log.exercise === ex.trim() && log.weight == w.trim() && log.reps == rep.trim()); if (!isDuplicate) newEntries.push({ date: d.trim(), workoutId: wid.trim(), exercise: ex.trim(), weight: w.trim(), reps: rep.trim(), e1rm: e1.trim() }); } });
-                if(newEntries.length > 0) { try { await fetch(STEIN_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(newEntries) }); alert(`SUCCESS: Uploaded ${newEntries.length} new records.`); location.reload(); } catch(err) { alert(`UPLOAD FAILED.`); label.innerHTML = "FAILED"; } } else { alert("No new records."); label.innerHTML = "IMPORT"; label.classList.remove('animate-pulse'); }
-            }; r.readAsText(f);
-        }
-
-        // --- ANALYTICS & RECOVERY ---
-        function showStats() {
-            setActiveNav(1);
-            const uniqueEx = [...new Set(state.logs.map(l => l.exercise))].sort();
-            let selectedEx = uniqueEx.find(e => e.includes('Bench')) || uniqueEx[0] || '';
-            const totalVol = state.logs.reduce((acc, l) => acc + (parseFloat(l.weight) * parseFloat(l.reps)), 0);
-            const tons = (totalVol / 1000).toFixed(1);
-            render(`<div class="fade-in pt-4 pb-20"><h2 class="text-2xl font-black mb-6 uppercase">Analytics Hub</h2><div class="card mb-6"><h3 class="font-bold text-xs text-zinc-500 mb-2 uppercase tracking-widest">Movement Trend</h3><select id="ex-select" onchange="updateChart(this.value)" class="input-dark text-sm w-full font-bold mb-4">${uniqueEx.map(ex => `<option value="${ex}" ${ex === selectedEx ? 'selected' : ''}>${ex}</option>`).join('')}</select><div class="flex justify-between items-center mb-4"><div class="flex items-center gap-2" onclick="document.getElementById('e1rm-modal').classList.remove('hidden')"><span class="font-bold text-xs text-zinc-500 uppercase tracking-widest">Progress</span><i data-lucide="info" class="w-4 h-4 text-blue-500 cursor-pointer"></i></div><span id="best-display" class="text-xs font-mono font-bold text-blue-400"></span></div><div class="relative h-48 w-full"><canvas id="c"></canvas></div></div><div class="grid grid-cols-2 gap-4 mb-6"><div class="card bg-zinc-900 border-zinc-800"><h3 class="font-bold text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Lifetime Load</h3><div class="text-2xl font-black text-white">${tons} <span class="text-sm font-bold text-blue-500">TONS</span></div></div><div class="card bg-zinc-900 border-zinc-800"><h3 class="font-bold text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Sets Logged</h3><div class="text-2xl font-black text-white">${state.logs.length}</div></div></div><div class="card mb-6"><h3 class="font-bold text-xs text-zinc-500 mb-4 uppercase tracking-widest">Work Capacity (Daily Volume)</h3><div class="relative h-40 w-full"><canvas id="volChart"></canvas></div></div><div class="card mb-6"><h3 class="font-bold text-xs text-zinc-500 mb-4 uppercase tracking-widest">Training Balance</h3><div class="relative h-48 w-full flex justify-center"><canvas id="donutChart"></canvas></div></div><div class="card"><h3 class="font-bold text-xs text-zinc-500 mb-4 uppercase tracking-widest">Consistency (Last 14 Days)</h3><div id="streak-viz" class="flex justify-between"></div></div></div>`);
-            if (selectedEx) setTimeout(() => updateChart(selectedEx), 100); setTimeout(renderVolumeChart, 150); setTimeout(renderDonutChart, 200); setTimeout(renderStreak, 250);
-        }
-
-        window.updateChart = function(exName) {
-            const ctx = document.getElementById('c'); if(!ctx) return; const chartStatus = Chart.getChart(ctx); if (chartStatus) chartStatus.destroy(); const exLogs = state.logs.filter(l => l.exercise === exName).sort((a,b) => new Date(a.date) - new Date(b.date)); if (exLogs.length === 0) return; const best = Math.max(...exLogs.map(l => parseFloat(l.e1rm))); document.getElementById('best-display').innerText = `ALL-TIME BEST: ${best}kg`;
-            new Chart(ctx, { type: 'line', data: { labels: exLogs.map(l => l.date.slice(5)), datasets: [{ label: 'e1RM', data: exLogs.map(l => l.e1rm), borderColor: '#3b82f6', tension: 0.3, pointRadius: 4 }, { label: 'Actual Weight', data: exLogs.map(l => l.weight), borderColor: '#10b981', tension: 0.3, pointRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, labels: { color: '#94a3b8', font: {size: 10} } } }, scales: { y: { grid: { color: '#27272a' } }, x: { grid: { display: false } } } } });
-        };
-
+        async function logSet(wId, ex, idx, btn) { const w = document.getElementById(`w-${idx}`).value; const r = document.getElementById(`r-${idx}`).value; if(!w || !r) return; const ghost = (w * (1 + r/30)).toFixed(1); const entry = { date: new Date().toISOString().split('T')[0], workoutId: wId, exercise: ex, weight: w, reps: r, e1rm: ghost }; state.logs.push(entry); localStorage.setItem('pf_backup', JSON.stringify(state.logs)); renderWorkout(wId); try { await fetch(STEIN_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify([entry]) }); } catch(e) { console.error('Sync failed'); } }
+        async function imp(i) { const f = i.files[0]; const r = new FileReader(); const label = i.parentElement; label.innerHTML = "UPLOADING..."; label.classList.add('animate-pulse'); r.onload = async function(e) { const text = e.target.result.replace(/\r/g, ''); const rows = text.split('\n').slice(1); const newEntries = []; rows.forEach(row => { if(!row.trim()) return; const cols = row.split(','); if (cols.length < 6) return; const [d, wid, ex, w, rep, e1] = cols; if(d && ex) { const isDuplicate = state.logs.some(log => log.date === d.trim() && log.exercise === ex.trim() && log.weight == w.trim() && log.reps == rep.trim()); if (!isDuplicate) newEntries.push({ date: d.trim(), workoutId: wid.trim(), exercise: ex.trim(), weight: w.trim(), reps: rep.trim(), e1rm: e1.trim() }); } }); if(newEntries.length > 0) { try { await fetch(STEIN_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(newEntries) }); alert(`SUCCESS: Uploaded ${newEntries.length} new records.`); location.reload(); } catch(err) { alert(`UPLOAD FAILED.`); label.innerHTML = "FAILED"; } } else { alert("No new records."); label.innerHTML = "IMPORT"; label.classList.remove('animate-pulse'); } }; r.readAsText(f); }
+        function showStats() { setActiveNav(1); const uniqueEx = [...new Set(state.logs.map(l => l.exercise))].sort(); let selectedEx = uniqueEx.find(e => e.includes('Bench')) || uniqueEx[0] || ''; const totalVol = state.logs.reduce((acc, l) => acc + (parseFloat(l.weight) * parseFloat(l.reps)), 0); const tons = (totalVol / 1000).toFixed(1); render(`<div class="fade-in pt-4 pb-20"><h2 class="text-2xl font-black mb-6 uppercase">Analytics Hub</h2><div class="card mb-6"><h3 class="font-bold text-xs text-zinc-500 mb-2 uppercase tracking-widest">Movement Trend</h3><select id="ex-select" onchange="updateChart(this.value)" class="input-dark text-sm w-full font-bold mb-4">${uniqueEx.map(ex => `<option value="${ex}" ${ex === selectedEx ? 'selected' : ''}>${ex}</option>`).join('')}</select><div class="flex justify-between items-center mb-4"><div class="flex items-center gap-2" onclick="document.getElementById('e1rm-modal').classList.remove('hidden')"><span class="font-bold text-xs text-zinc-500 uppercase tracking-widest">Progress</span><i data-lucide="info" class="w-4 h-4 text-blue-500 cursor-pointer"></i></div><span id="best-display" class="text-xs font-mono font-bold text-blue-400"></span></div><div class="relative h-48 w-full"><canvas id="c"></canvas></div></div><div class="grid grid-cols-2 gap-4 mb-6"><div class="card bg-zinc-900 border-zinc-800"><h3 class="font-bold text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Lifetime Load</h3><div class="text-2xl font-black text-white">${tons} <span class="text-sm font-bold text-blue-500">TONS</span></div></div><div class="card bg-zinc-900 border-zinc-800"><h3 class="font-bold text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Sets Logged</h3><div class="text-2xl font-black text-white">${state.logs.length}</div></div></div><div class="card mb-6"><h3 class="font-bold text-xs text-zinc-500 mb-4 uppercase tracking-widest">Work Capacity (Daily Volume)</h3><div class="relative h-40 w-full"><canvas id="volChart"></canvas></div></div><div class="card mb-6"><h3 class="font-bold text-xs text-zinc-500 mb-4 uppercase tracking-widest">Training Balance</h3><div class="relative h-48 w-full flex justify-center"><canvas id="donutChart"></canvas></div></div><div class="card"><h3 class="font-bold text-xs text-zinc-500 mb-4 uppercase tracking-widest">Consistency (Last 14 Days)</h3><div id="streak-viz" class="flex justify-between"></div></div></div>`); if (selectedEx) setTimeout(() => updateChart(selectedEx), 100); setTimeout(renderVolumeChart, 150); setTimeout(renderDonutChart, 200); setTimeout(renderStreak, 250); }
+        window.updateChart = function(exName) { const ctx = document.getElementById('c'); if(!ctx) return; const chartStatus = Chart.getChart(ctx); if (chartStatus) chartStatus.destroy(); const exLogs = state.logs.filter(l => l.exercise === exName).sort((a,b) => new Date(a.date) - new Date(b.date)); if (exLogs.length === 0) return; const best = Math.max(...exLogs.map(l => parseFloat(l.e1rm))); document.getElementById('best-display').innerText = `ALL-TIME BEST: ${best}kg`; new Chart(ctx, { type: 'line', data: { labels: exLogs.map(l => l.date.slice(5)), datasets: [{ label: 'e1RM', data: exLogs.map(l => l.e1rm), borderColor: '#3b82f6', tension: 0.3, pointRadius: 4 }, { label: 'Actual Weight', data: exLogs.map(l => l.weight), borderColor: '#10b981', tension: 0.3, pointRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, labels: { color: '#94a3b8', font: {size: 10} } } }, scales: { y: { grid: { color: '#27272a' } }, x: { grid: { display: false } } } } }); };
         function renderVolumeChart() { const ctx = document.getElementById('volChart'); if(!ctx) return; const volByDate = {}; state.logs.forEach(l => { if(!volByDate[l.date]) volByDate[l.date] = 0; volByDate[l.date] += (parseFloat(l.weight) * parseFloat(l.reps)); }); const dates = Object.keys(volByDate).sort(); const volumes = dates.map(d => volByDate[d]); new Chart(ctx, { type: 'bar', data: { labels: dates.map(d => d.slice(5)), datasets: [{ label: 'Vol', data: volumes, backgroundColor: '#3b82f6', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#27272a' } }, x: { grid: { display: false } } } } }); }
         function renderDonutChart() { const ctx = document.getElementById('donutChart'); if(!ctx) return; const counts = { A:0, B:0, C:0, D:0 }; state.logs.forEach(l => { if(counts[l.workoutId] !== undefined) counts[l.workoutId]++ }); new Chart(ctx, { type: 'doughnut', data: { labels: ['A', 'B', 'C', 'D'], datasets: [{ data: [counts.A, counts.B, counts.C, counts.D], backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'], borderWidth: 0 }] }, options: { cutout: '70%', plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: {size: 10} } } } } }); }
         function renderStreak() { const container = document.getElementById('streak-viz'); if(!container) return; const today = new Date(); let html = ''; const activeDates = new Set(state.logs.map(l => l.date)); for (let i = 13; i >= 0; i--) { const d = new Date(); d.setDate(today.getDate() - i); const iso = d.toISOString().split('T')[0]; const isActive = activeDates.has(iso); const dayLetter = d.toLocaleDateString('en-US', { weekday: 'narrow' }); html += `<div class="flex flex-col items-center gap-1"><div class="w-2 h-2 rounded-full ${isActive ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]' : 'bg-zinc-800'}"></div><span class="text-[8px] text-zinc-600">${dayLetter}</span></div>`; } container.innerHTML = html; }
         
+        let currentCalDate = new Date();
+        function showHistory() { setActiveNav(2); renderCalendarView(); }
+        function renderCalendarView() { const year = currentCalDate.getFullYear(); const month = currentCalDate.getMonth(); const firstDay = new Date(year, month, 1); const lastDay = new Date(year, month + 1, 0); const daysInMonth = lastDay.getDate(); const startDay = firstDay.getDay(); const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]; const activeDays = new Set(state.logs.map(l => l.date)); let html = `<div class="fade-in pt-4 pb-20"><h2 class="text-2xl font-black mb-6 uppercase">History Log</h2><div class="card mb-6"><div class="cal-header"><button onclick="changeMonth(-1)"><i data-lucide="chevron-left"></i></button><span>${monthNames[month]} ${year}</span><button onclick="changeMonth(1)"><i data-lucide="chevron-right"></i></button></div><div class="cal-grid mb-2 text-[10px] text-zinc-500 font-bold uppercase"><div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div></div><div class="cal-grid">`; for(let i=0; i<startDay; i++) { html += `<div></div>`; } for(let d=1; d<=daysInMonth; d++) { const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; const isActive = activeDays.has(dateStr); const isSelected = state.historyViewDate === dateStr; const isToday = new Date().toISOString().split('T')[0] === dateStr; html += `<div onclick="selectDate('${dateStr}')" class="cal-day ${isSelected ? 'active' : ''} ${isToday ? 'today' : ''}">${d}${isActive ? `<div class="cal-dot"></div>` : ''}</div>`; } html += `</div></div><div class="flex justify-between items-center mb-4"><h3 class="font-bold text-lg text-white">${new Date(state.historyViewDate).toDateString()}</h3><button onclick="openManualLog('${state.historyViewDate}')" class="text-xs bg-blue-900/30 text-blue-400 px-3 py-1 rounded-lg border border-blue-800 font-bold flex items-center gap-1"><i data-lucide="plus" class="w-3 h-3"></i> Add Log</button></div>`; const daysLogs = state.logs.filter(l => l.date === state.historyViewDate).reverse(); if(daysLogs.length > 0) { html += `<div class="space-y-2">`; daysLogs.forEach(l => { html += `<div class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl flex justify-between items-center"><div><div class="font-bold text-sm text-white">${l.exercise}</div><div class="text-[10px] text-zinc-500">${l.workoutId} Session</div></div><div class="font-mono text-blue-400 text-sm font-bold">${l.weight}kg x ${l.reps}</div></div>`; }); html += `</div>`; } else { html += `<div class="text-center text-zinc-500 py-10 text-sm">No workouts logged this day.</div>`; } html += `</div>`; render(html); }
+        function changeMonth(dir) { currentCalDate.setMonth(currentCalDate.getMonth() + dir); renderCalendarView(); }
+        function selectDate(dateStr) { state.historyViewDate = dateStr; renderCalendarView(); }
+        function openManualLog(dateStr) { const modal = document.getElementById('manual-modal'); document.getElementById('manual-date').value = dateStr; const allExercises = new Set(Object.keys(ALTERNATIVES)); Object.values(ALTERNATIVES).forEach(list => list.forEach(ex => allExercises.add(ex))); const select = document.getElementById('manual-exercise'); select.innerHTML = [...allExercises].sort().map(ex => `<option value="${ex}">${ex}</option>`).join(''); modal.classList.remove('hidden'); }
+        function closeManual() { document.getElementById('manual-modal').classList.add('hidden'); }
+        async function saveManualLog() { const date = document.getElementById('manual-date').value; const ex = document.getElementById('manual-exercise').value; const w = document.getElementById('manual-weight').value; const r = document.getElementById('manual-reps').value; if(!date || !ex || !w || !r) { alert("Please fill all fields"); return; } const ghost = (w * (1 + r/30)).toFixed(1); const entry = { date: date, workoutId: 'M', exercise: ex, weight: w, reps: r, e1rm: ghost }; state.logs.push(entry); localStorage.setItem('pf_backup', JSON.stringify(state.logs)); closeManual(); renderCalendarView(); try { await fetch(STEIN_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify([entry]) }); } catch(e) { console.error('Sync failed'); } }
         function renderRecovery() { render(`<div class="fade-in pt-10 text-center"><div class="bg-orange-900/20 border border-orange-500 p-8 rounded-2xl mb-8"><i data-lucide="alert-circle" class="w-16 h-16 text-orange-500 mx-auto mb-4"></i><h2 class="text-2xl font-black text-orange-500 uppercase">Recovery Mode</h2><p class="text-xs text-orange-200/50 mt-2 uppercase tracking-widest">Pain Level ${state.painLevel}</p></div><div class="text-left space-y-4"><div class="card border-l-4 border-orange-500"><h3 class="font-bold">Spinal Decompression</h3><p class="text-zinc-500 text-xs">15 min brisk walk + McGill Big 3 only.</p></div></div><button onclick="goHome()" class="mt-8 text-zinc-500 text-xs font-black uppercase underline">Back to Hub</button></div>`); }
         function renderEmergency() { render(`<div class="fade-in pt-10 text-center"><div class="bg-red-900/20 border border-red-500 p-8 rounded-2xl mb-8"><i data-lucide="shield-x" class="w-16 h-16 text-red-500 mx-auto mb-4"></i><h2 class="text-2xl font-black text-red-500 uppercase">Absolute Stop</h2></div><p class="text-zinc-500 px-6">Your spine is in protective guarding. Do not lift. Lie on your stomach immediately.</p><button onclick="goHome()" class="mt-8 text-zinc-500 text-xs font-black uppercase underline">Back to Hub</button></div>`); }
 
